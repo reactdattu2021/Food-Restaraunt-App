@@ -1,0 +1,154 @@
+.navber-container {
+  background-color: #2D1B0E; /* bg-[#2D1B0E] */
+  border-bottom: 8px solid rgba(183, 110, 0, 0.3); /* border-b-8 border-amber-900/30 */
+  box-shadow: 0 25px 50px -12px rgba(183, 110, 0, 0.3); /* shadow-[0_25px_50px_-12px] shadow-amber-900/30 */
+  position: sticky; /* sticky */
+  top: 0; /* top-0 */
+  z-index: 50; /* z-50 */
+  font-family: 'Vibes', cursive; /* font-vibes - assuming 'Vibes' is a custom font, typically from Google Fonts */
+  overflow-x: hidden; /* overflow-x-hidden */
+ 
+}
+
+
+.div-first { /* You'll replace 'your-element-class' with the actual class name on your HTML element */
+  position: absolute; /* absolute */
+  top: -3px; /* -top-3 */
+  left: 50%; /* left-1/2 */
+  transform: translateX(-50%); /* -translate-x-1/2 */
+  width: 100%; /* w-full */
+  max-width: 1280px; /* max-w-7xl (Tailwind's default max-w-7xl is 1280px) */
+  padding-left: 16px; /* px-4 (Tailwind's default px-4 is 16px) */
+  padding-right: 16px; /* px-4 */
+}
+.div-second { /* Replace 'your-element-class' with the actual class name on your HTML element */
+  height: 6px;
+  background: linear-gradient(to right, transparent, rgba(234, 88, 12, 0.5), transparent);
+  box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+}
+.fespoon-div{ /* Replace 'your-element-class' with the actual class name on your HTML element */
+  display: flex;
+  justify-content: space-between;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.spoon-class { /* Replace 'your-element-class' with the actual class name on your HTML element */
+  color: rgba(255, 193, 7, 0.4); /* text-amber-500/40 */
+  margin-top: -16px; /* -mt-4 (Tailwind's default mt-4 is 16px) */
+  margin-left: -8px; /* -ml-2 (Tailwind's default ml-2 is 8px) */
+  transform: rotate(45deg); /* rotate-45 */
+ 
+  font-size: 32px; /* This comes from 'size={32}' which is typically a prop in component libraries like React, not a direct CSS class. */
+}
+.spoon-class1 { /* Replace 'your-element-class' with the actual class name on your HTML element */
+  color: rgba(255, 193, 7, 0.4); /* text-amber-500/40 */
+  margin-top: -16px; /* -mt-4 (Tailwind's default mt-4 is 16px) */
+  margin-right: -8px; /* -ml-2 (Tailwind's default ml-2 is 8px) */
+  transform: rotate(45deg); /* rotate-45 */
+  font-size: 32px; /* This comes from 'size={32}' which is typically a prop in component libraries like React, not a direct CSS class. */
+}
+.nav-main-div { /* Replace 'your-element-class' with the actual class name on your HTML element */
+  max-width: 1280px; /* max-w-7xl (Tailwind's default max-w-7xl is 1280px) */
+  margin-left: auto; /* mx-auto */
+  margin-right: auto; /* mx-auto */
+  padding-left: 16px; /* px-4 (Tailwind's default px-4 is 16px) */
+  padding-right: 16px; /* px-4 */
+  position: relative; /* relative */
+}
+.nav-sub-div { /* Replace 'your-element-class' with the actual class name on your HTML element */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px; /* h-16 (Tailwind's default h-16 is 64px) */
+}
+
+/* Responsive heights for medium and large screens */
+@media (min-width: 768px) { /* Corresponds to Tailwind's 'md' breakpoint */
+  .nav-sub-div {
+    height: 80px; /* md:h-20 (Tailwind's default h-20 is 80px) */
+  }
+}
+
+@media (min-width: 1024px) { /* Corresponds to Tailwind's 'lg' breakpoint */
+  .nav-sub-div {
+    height: 96px; /* lg:h-24 (Tailwind's default h-24 is 96px) */
+  }
+}
+.logo-main-div { /* Replace 'your-element-class' with the actual class name on your HTML element */
+  flex-shrink: 0; /* flex-shrink-0 */
+  display: flex; /* flex */
+  align-items: center; /* items-center */
+  margin-left: 0; /* ml-0 */
+  gap: 8px; /* space-x-2 (Tailwind's default space-x-2 is 8px for gap) */
+  position: relative; /* relative */
+}
+
+/* Responsive translations for medium and large screens */
+@media (min-width: 768px) { /* Corresponds to Tailwind's 'md' breakpoint */
+  .logo-main-div {
+    transform: translateX(-16px); /* md:-translate-x-4 (Tailwind's default translate-x-4 is 16px) */
+    margin-left: 8px; /* md:ml-2 (Tailwind's default ml-2 is 8px) */
+  }
+}
+
+@media (min-width: 1024px) { /* Corresponds to Tailwind's 'lg' breakpoint */
+  .logo-main-div {
+    transform: translateX(-24px); /* lg:-translate-x-6 (Tailwind's default translate-x-6 is 24px) */
+  }
+}
+
+/* The 'group' utility is a Tailwind-specific class that doesn't directly translate to a CSS property
+   on the element itself. It enables conditional styling of child elements based on the parent's state
+   (e.g., .group:hover .child-element). You would handle this with standard CSS parent-child selectors
+   if you needed that functionality. */
+.sub-div-logo { /* Replace 'your-element-class' with the actual class name on your HTML element */
+  position: absolute; /* absolute */
+  top: -16px; /* -inset-4 (Tailwind's default inset-4 is 16px, so -inset-4 applies -16px to all insets) */
+  right: -16px; /* -inset-4 */
+  bottom: -16px; /* -inset-4 */
+  left: -16px; /* -inset-4 */
+  background-color: rgba(255, 193, 7, 0.1); /* bg-amber-500/10 */
+  border-radius: 9999px; /* rounded-full */
+  filter: blur(24px); /* blur-xl (Tailwind's default blur-xl is 24px) */
+  opacity: 0; /* opacity-0 */
+  transition: opacity 0.3s ease-in-out; /* transition-opacity duration-300 */
+}
+
+/* This rule handles the 'group-hover/nav:opacity-100' part.
+   It assumes the parent element has the class 'group/nav' (or just 'group').
+   When the parent is hovered, this element's opacity will transition to 1 (100%). */
+/* .group\/nav:hover .sub-div-logo, /* For 'group/nav' parent class */
+/* .group:hover .sub-div-logo { /* For a generic 'group' parent class */
+  /* opacity: 1; */ */ */
+/* } */
+.toque-class { /* Replace 'your-element-class' with the actual class name on your HTML element */
+  font-size: 30px; /* text-3xl (Tailwind's default text-3xl is 30px) */
+  color: #fbbf24; /* text-amber-500 */
+  transition: all 0.15s ease-in-out; /* transition-all with a default duration */
+}
+
+/* Responsive font sizes for medium and large screens */
+@media (min-width: 768px) { /* Corresponds to Tailwind's 'md' breakpoint */
+  .toque-class {
+    font-size: 36px; /* md:text-4xl (Tailwind's default text-4xl is 36px) */
+  }
+}
+
+@media (min-width: 1024px) { /* Corresponds to Tailwind's 'lg' breakpoint */
+  .toque-class {
+    font-size: 48px; /* lg:text-5xl (Tailwind's default text-5xl is 48px) */
+  }
+}
+
+/* Hover effects when the parent with 'group' class is hovered */
+.group:hover.toque-class { /* For a generic 'group' parent class */
+  transform: rotate(12deg); /* group-hover:rotate-12 */
+  color: #fcd34d; /* group-hover:text-amber-400 */
+}
+
+/* Direct hover effects on the element itself */
+.toque-class-class:hover {
+  filter: drop-shadow(0 0 15px rgba(234, 88, 12, 0.5)); /* hover:drop-shadow-[0_0_15px] hover:drop-shadow-500/50 */
+}
+  
+   
