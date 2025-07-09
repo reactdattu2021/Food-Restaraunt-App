@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useCart } from "../../cortContext/cortcontext";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { Link } from 'react-router-dom';
-import './OurHomeMenu.css'
+
 const categories = [
   "Breakfast",
   "Lunch",
