@@ -1,0 +1,423 @@
+﻿openapi: "3.0.0"
+info:
+  title: User API
+  version: "1.0.0"
+  description: User authentication and email verification endpoints
+
+servers:
+  - url: http://localhost:5003
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /FoodRestaurent/user/signup:
+    post:
+      tags:
+        - User Auth
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example: john@example.com
+                password:
+                  type: string
+                  example: secret123
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      userID:
+                        type: string
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      status:
+                        type: string
+                        example: inactive
+        "400":
+          description: Validation error (missing fields / invalid email / short password)
+        "409":
+          description: Email already registered
+        "500":
+          description: Internal server error
+
+  /FoodRestaurent/user/signin:
+    post:
+      tags:
+        - User Auth
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: john@example.com
+                password:
+                  type: string
+                  example: secret123
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  JWTtoken:
+                    type: string
+                  userID:
+                    type: string
+                  email:
+                    type: string
+                  name:
+                    type: string
+        "400":
+          description: Missing email or password
+        "401":
+          description: Invalid password
+        "403":
+          description: Account inactive â€” email not verified
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+
+  /FoodRestaurent/user/verifyEmail:
+   post:
+    tags:
+      - User Auth
+    summary: Verify user email using encrypted verification token
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - encryptedID
+            properties:
+              email:
+                type: string
+                example: john@example.com
+              encryptedID:
+                type: string
+                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+    responses:
+      "200":
+        description: Email verified successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Account verified successfully, please login
+                status:
+                  type: string
+                  example: active
+
+      "400":
+        description: Invalid verification token or corrupted link
+
+      "401":
+        description: Invalid email format or account already active
+
+      "404":
+        description: User not found
+
+      "410":
+        description: Verification link expired and new link sent
+
+      "500":
+        description: Internal server error
+
+
+  /FoodRestaurent/user/resend-verification:
+   get:
+    tags:
+      - User Auth
+    summary: Resend email verification link
+    parameters:
+      - in: query
+        name: email
+        required: true
+        schema:
+          type: string
+        description: Email address of the user requesting a new verification link
+    responses:
+      "200":
+        description: Verification email sent successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: New verification email sent
+
+      "400":
+        description: Account already verified or invalid email
+
+      "404":
+        description: User not found
+
+      "500":
+        description: Internal server error
+  /FoodRestaurent/user/forget-password:
+    patch:
+      tags:
+        - User Auth
+      summary: Request password reset link
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  example: john@example.com
+      responses:
+        "200":
+          description: Password reset link sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Password reset link sent to your email 
+  /FoodRestaurent/user/set-password-with-forget-link:
+    put:
+      tags:
+        - User Auth
+      summary: Set new password using password reset link
+      requestBody:
+        required: [token, newpassword]
+        content:
+          application/json:
+            schema:
+              type: object
+              required: true
+              properties:
+            
+                token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+                newpassword :
+                  type: string
+                  example: newpassword123
+      responses:
+        "200":
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Password reset successfully, please login with your new password
+      "400":
+        description: Invalid or expired password reset token 
+      "500":
+        description: Internal server error    
+  /FoodRestaurent/user/change-password-with-old-password:
+    put:
+      tags:
+        - User Auth
+      summary: Change password using old password
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [oldPassword, newPassword]
+              properties:
+                oldpassword:
+                  type: string
+                  example: oldpassword123
+                newpassword:
+                  type: string
+                  example: newpassword123
+                confirmpassword:
+                  type: string
+                  example: newpassword123  
+      responses:
+        "200":
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Password changed successfully, please login with your new password
+      "400":
+        description: Missing old or new password 
+      "401":
+        description: Invalid old password or unauthorized 
+      "500":
+        description: Internal server error    
+  /FoodRestaurent/user/signout:
+    put:
+      tags:
+        - User Auth
+      summary: User logout
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Logged out successfully
+        "401":
+          description: Unauthorized or invalid token 
+        "500":
+          description: Internal server error      
+  /FoodRestaurent/user/user-details:
+    get:
+      tags:
+        - User profile
+      summary: Get user details by ID
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: User details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      userID:
+                        type: string
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      bio:
+                        type: string
+                      status:
+                        type: string
+                        example: active
+        "401":
+          description: Unauthorized or invalid token 
+        "404":
+          description: User not found 
+        "500":
+          description: Internal server error   
+  /FoodRestaurent/user/update-user-bio:
+    put:
+      tags:
+        - User profile
+      summary: Update user bio
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bio]
+              properties:
+                bio:
+                  type: string
+                  example: Food lover and home chef
+      responses:
+        "200":
+          description: User bio updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: User bio updated successfully
+        "400":
+          description: Missing bio field 
+        "401":
+          description: Unauthorized or invalid token 
+        "500":
+          description: Internal server error               

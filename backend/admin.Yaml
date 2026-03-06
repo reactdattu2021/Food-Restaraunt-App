@@ -1,0 +1,184 @@
+openapi: "3.0.0"
+info:
+  title: Admin API
+  version: "1.0.0"
+  description: Admin authentication and management endpoints
+
+servers:
+  - url: http://localhost:5003
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /FoodRestaurent/admin/signup:
+    post:
+      tags:
+        - Admin Auth
+      summary: Register a new admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, name, password]
+              properties:
+                email:
+                  type: string
+                  example: admin@restaurant.com
+                name:
+                  type: string
+                  example: John Admin
+                password:
+                  type: string
+                  example: admin@123
+      responses:
+        "201":
+          description: Admin created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "400":
+          description: Validation error (missing field / invalid email / short password)
+        "409":
+          description: Email already registered
+        "500":
+          description: Internal server error
+
+  /FoodRestaurent/admin/login:
+    post:
+      tags:
+        - Admin Auth
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: admin@restaurant.com
+                password:
+                  type: string
+                  example: admin@123
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  JWTtoken:
+                    type: string
+                  username:
+                    type: string
+                  userID:
+                    type: string
+                  role:
+                    type: string
+        "400":
+          description: Missing fields or invalid email format
+        "401":
+          description: Incorrect password
+        "403":
+          description: Account blocked or inactive
+        "404":
+          description: Email not registered
+        "500":
+          description: Internal server error
+  /FoodRestaurent/admin/change-password:
+    put:  
+      tags:
+        - Admin Auth
+      summary: Change admin password
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [oldpassword, newpassword ]
+              properties:
+                oldpassword:
+                  type: string
+                  example: admin@123
+                newpassword:
+                  type: string
+                  example: newAdmin@123
+      responses:
+        "200":
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "400":
+          description: Missing fields or new password too short
+        "401":
+          description: Incorrect current password or invalid token
+        "403":
+          description: Account blocked or inactive
+        "404":
+          description: Admin not found
+        "500":
+          description: Internal server error 
+  /FoodRestaurent/admin/forget-password:
+    post:
+      tags:
+        - Admin Auth
+      summary: Admin forget password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  example: admin@restaurant.com
+      responses:
+        "200":
+          description: Password reset link sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "400":
+          description: Missing email or invalid email format
+        "404":
+          description: Email not registered
+        "500":
+          description: Internal server error
