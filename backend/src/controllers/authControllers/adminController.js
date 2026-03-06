@@ -1,4 +1,5 @@
 import admins from "../../models/admins/adminsSchema.js";
+import mongoose from "mongoose";
 import { generateUserToken } from "../../middlewares/autentication.js";
 import { sendEmail } from "../../utils/sentMails.js";
 import { AdminForgetPassword } from "../../utils/emailTemplate.js";
@@ -45,10 +46,15 @@ export const adminSignup = async (req, res) => {
           : "Password must be at least 6 characters long",
       });
     }
-    const newAdmin = await admins.create({ email, name, password, status: "active" });
+    const newAdmin = await admins.create({
+      email,
+      name,
+      password,
+      status: "active",
+    });
     if (!newAdmin) {
       const error = new Error(
-        "Unable to create account, please contact the support team"
+        "Unable to create account, please contact the support team",
       );
       error.statuscode = 500;
       error.status = "Database Error";
@@ -59,9 +65,12 @@ export const adminSignup = async (req, res) => {
       statuscode: 201,
       message: "Admin account created successfully please login",
     });
-
   } catch (error) {
-    return res.status(500).json({ success: false, message: "internal server error during signup", details: error.message });
+    return res.status(500).json({
+      success: false,
+      message: "internal server error during signup",
+      details: error.message,
+    });
   }
 };
 // Admin Login Controller
@@ -92,7 +101,9 @@ export const adminLogin = async (req, res) => {
       .select("password name email accountType status");
 
     if (!admin) {
-      const error = new Error("Incorrect email user not found this email is not registered");
+      const error = new Error(
+        "Incorrect email user not found this email is not registered",
+      );
       error.statuscode = 404;
       error.status = "Not Found";
       return res.status(404).json({ success: false, message: error.message });
@@ -100,7 +111,9 @@ export const adminLogin = async (req, res) => {
 
     // Check if role is admin
     if (admin.accountType !== "admin") {
-      const error = new Error("You are not authorized to access this resource only admin can access this resource");
+      const error = new Error(
+        "You are not authorized to access this resource only admin can access this resource",
+      );
       error.statuscode = 403;
       error.status = "Unauthorized";
       return res.status(403).json({ success: false, message: error.message });
@@ -108,7 +121,9 @@ export const adminLogin = async (req, res) => {
 
     // Check password existence
     if (!admin.password) {
-      const error = new Error("Password not set for this account please contact the support team");
+      const error = new Error(
+        "Password not set for this account please contact the support team",
+      );
       error.statuscode = 400;
       error.status = "Bad Request";
       return res.status(400).json({ success: false, message: error.message });
@@ -125,7 +140,9 @@ export const adminLogin = async (req, res) => {
 
     // Check account status
     if (admin.status === "inactive") {
-      const error = new Error("Account is inactive, please verify and contact to support team");
+      const error = new Error(
+        "Account is inactive, please verify and contact to support team",
+      );
       error.statuscode = 403;
       error.status = "Bad Request";
       return res.status(403).json({ success: false, message: error.message });
@@ -210,7 +227,6 @@ export const changePassword = async (req, res) => {
       success: true,
       message: "Password updated successfully. Please login again.",
     });
-
   } catch (error) {
     console.error("Change Password Error:", error);
     return res.status(500).json({
@@ -236,11 +252,15 @@ export const adminforgetpassword = async (req, res) => {
     try {
       user = await admins.findOne({ email });
       if (!user) {
-        return res.status(404).json({ message: "No account found with this email in database" });
+        return res
+          .status(404)
+          .json({ message: "No account found with this email in database" });
       }
     } catch (error) {
-      
-      return res.status(500).json({ message: "Database error while fetching user", details: error.message });
+      return res.status(500).json({
+        message: "Database error while fetching user",
+        details: error.message,
+      });
     }
 
     const fullname = `${user.name}`;
@@ -257,10 +277,10 @@ export const adminforgetpassword = async (req, res) => {
       statuscode: 200,
       message: "Password reset link sent successfully",
     });
-
   } catch (error) {
-    
-    return res.status(500).json({ message: "Internal Server Error",details: error.message });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", details: error.message });
   }
 };
 export const adminsetnewpassword = async (req, res) => {
@@ -268,12 +288,16 @@ export const adminsetnewpassword = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Invalid email address wrong format" });
+      return res
+        .status(400)
+        .json({ message: "Invalid email address wrong format" });
     }
 
     const user = await admins.findOne({ email });
@@ -289,10 +313,84 @@ export const adminsetnewpassword = async (req, res) => {
       statuscode: 200,
       message: "Password updated successfully, Please Login",
     });
-
   } catch (error) {
     return res.status(error.statuscode || 500).json({
       message: error.message || "Internal Server Error",
+    });
+  }
+};
+export const getadmindata = async (req, res) => {
+  try {
+    const id = req.user._id;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid user ID format" });
+    }
+
+    let user;
+    try {
+      user = await admins.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        message: "Database error while fetching user",
+        details: error.message,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      statuscode: 200,
+      message: "Admin data retrieved successfully",
+      adminId: user._id,
+      name: user.name,
+      email: user.email,
+      accountRole: user.accountType,
+      status: user.status,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server Error while retrieving admin data",
+      details: error.message,
+    });
+  }
+};
+export const adminProfileUpdate = async (req, res) => {
+  try {
+    const allowed = ["name", "email"];
+    const updatedData = {};
+
+    allowed.forEach((field) => {
+      if (req.body[field] !== undefined) updatedData[field] = req.body[field];
+    });
+
+    const updatedAdmin = await admins.findByIdAndUpdate(
+      req.user._id,
+      updatedData,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedAdmin) {
+      return res.status(404).json({
+        success: false,
+        message: "Admin not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      statuscode: 200,
+      message: "Profile updated successfully",
+      data: updatedAdmin,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error while updating profile",
+      details: error.message,
     });
   }
 };

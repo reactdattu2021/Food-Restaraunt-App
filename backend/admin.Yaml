@@ -182,3 +182,108 @@ paths:
           description: Email not registered
         "500":
           description: Internal server error
+  /FoodRestaurent/admin/set-new-password:
+    post:
+      tags:
+        - Admin Auth
+      summary: Set new password after forget password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: true
+              properties:
+                email:
+                  type: string
+                  example: admin@restaurant.com
+                password:
+                  type: string
+                  example: newAdmin@123
+      responses:
+        "200":
+          description: New password set successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "400":
+          description: Missing fields or new password too short
+        "401":
+          description: Invalid or expired token
+        "404":
+          description: Admin not found for the provided token
+        "500":
+          description: Internal server error        
+  /FoodRestaurent/admin/profile:
+    get:
+      tags:
+        - Admin profile
+      summary: Get admin profile data
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Admin profile data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      role:
+                        type: string
+        "401":
+          description: Invalid token or unauthorized access
+        "403":
+          description: Account blocked or inactive
+        "404":
+          description: Admin not found
+        "500":
+          description: Internal server error 
+  /FoodRestaurent/admin/profile-update:
+    put:
+      tags:
+        - Admin profile
+      summary: Update admin profile data
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example:
+        "200":
+          description: Admin profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string 
+        "400":
+          description: Invalid email format                           
